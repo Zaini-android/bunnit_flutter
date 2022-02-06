@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "603618465006",
+    "project_id": "bunnit-11f42",
+    "storage_bucket": "bunnit-11f42.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:603618465006:android:20c9d6729aa5b5b09b0fff",
+        "android_client_info": {
+          "package_name": "com.technestco.bunnit.bunnit_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "603618465006-7c0174o6e504tc98pe0pu0nktc6pmstu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDbF2RFPtglY2rzWUmSjuY5tY2dKw6ti0g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "603618465006-7c0174o6e504tc98pe0pu0nktc6pmstu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
