@@ -193,7 +193,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           onPressed: () {
             showLoaderDialog(context);
             signup();
-            Navigator.pop(context);
+
           },
           child: const Text(
             "SignUp",
@@ -228,13 +228,26 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    SizedBox(
-                        height: 100,
-                        width: 100,
-                        child: Image.asset(
-                          "images/Logo.png",
-                          fit: BoxFit.contain,
-                        )),
+                    Container(
+                      height: 150,
+                      width: 150,
+                      decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.deepOrangeAccent.withOpacity(0.3),
+                              spreadRadius: 3,
+                              blurRadius: 5,
+                              offset:
+                                  Offset(0, 3), // changes position of shadow
+                            ),
+                          ],
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: Colors.deepOrange),
+                          image: DecorationImage(
+                              image: AssetImage(
+                            'images/bunnit_orange_logo.jpg',
+                          ))),
+                    ),
                     SizedBox(height: 45),
                     firstNameField,
                     SizedBox(height: 20),
@@ -281,6 +294,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             .doc(_auth.currentUser!.uid)
             .set(userData)
             .whenComplete(() => {
+        Navigator.pop(context),
                   Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(

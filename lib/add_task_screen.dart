@@ -66,7 +66,7 @@ class _AddTaskWidgetState extends State<AddTaskWidget> {
         ),
         centerTitle: true,
         automaticallyImplyLeading: false,
-        leading: const Icon(Icons.close),
+        leading:  GestureDetector(onTap: (){Navigator.pop(context);}, child: Icon(Icons.close)),
         elevation: 0,
       ),
       body: Container(
@@ -264,7 +264,9 @@ class _AddTaskWidgetState extends State<AddTaskWidget> {
                                 ),
                                 InkWell(
                                   onTap: () {
-                                    addTasks(_selectedDate, textController);
+                                    //custom task
+                                    String title = textController.text.trim();
+                                    addTasks(_selectedDate, title);
                                   },
                                   child: Container(
                                     width: double.infinity,
@@ -438,19 +440,39 @@ class _AddTaskWidgetState extends State<AddTaskWidget> {
                                           const SizedBox(
                                             height: 20,
                                           ),
-                                          Container(
-                                            width: double.infinity,
-                                            color: ActiveColor,
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 5, horizontal: 20),
-                                            child: const Center(
-                                                child: Text(
-                                              "Add Task",
-                                              style: TextStyle(
-                                                  fontFamily: "Poppins",
-                                                  fontWeight: FontWeight.w700,
-                                                  color: Colors.white),
-                                            )),
+                                          GestureDetector(
+                                            onTap: () {
+                                              addTasks(
+                                                  _selectedDate,
+                                                  index == 0
+                                                      ? tickList[i]["task"]
+                                                      : index == 1
+                                                          ? heartList[i]["task"]
+                                                          : index == 2
+                                                              ? foodList[i]
+                                                                  ["task"]
+                                                              : index == 3
+                                                                  ? timeList[i]
+                                                                      ["task"]
+                                                                  : dontList[i]
+                                                                      ["task"]);
+                                            },
+                                            child: Container(
+                                              width: double.infinity,
+                                              color: ActiveColor,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 5,
+                                                      horizontal: 20),
+                                              child: const Center(
+                                                  child: Text(
+                                                "Add Task",
+                                                style: TextStyle(
+                                                    fontFamily: "Poppins",
+                                                    fontWeight: FontWeight.w700,
+                                                    color: Colors.white),
+                                              )),
+                                            ),
                                           )
                                         ],
                                       ),
@@ -533,7 +555,7 @@ class _AddTaskWidgetState extends State<AddTaskWidget> {
   }
 
   String Pending = 'Pending';
-  void addTasks(String selectedDate, TextEditingController textController) {
+  void addTasks(String selectedDate, String textController) {
     showLoaderDialog(context);
     Navigator.pop(context);
     FirebaseFirestore.instance
@@ -542,7 +564,7 @@ class _AddTaskWidgetState extends State<AddTaskWidget> {
         .collection('Tasks')
         .doc()
         .set({
-      "Title": textController.text.trim().toString(),
+      "Title": textController,
       "getDate": selectedDate,
       "status": Pending
     }, SetOptions(merge: true));

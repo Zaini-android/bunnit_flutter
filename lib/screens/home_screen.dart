@@ -7,6 +7,7 @@ import 'package:bunnit_flutter/widgets/top_container.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -78,7 +79,12 @@ class _HomePageState extends State<HomePage> {
         .get();
     List<DocumentSnapshot> _myDocCount = _myDoc.docs;
     totTasksDone = _myDocCount.length;
-    print("These are the Completed Tasks${_myDocCount.length}"); // Co
+    print("These are the Completed Tasks${_myDocCount.length}");
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .set(
+            {'totalPoints': totTasksDone * 100}, SetOptions(merge: true)); // Co
     setState(() {}); // unt of Documents in Collection
   }
 
@@ -128,7 +134,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           children: <Widget>[
             TopContainer(
-              height: 210,
+              height: 150,
               width: width,
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -140,22 +146,29 @@ class _HomePageState extends State<HomePage> {
                           onTap: () {
                             const snackBar = SnackBar(
                               content:
-                                  Text('Complete Your Points to Earn More'),
+                                  Text('Complete Your Task to Earn Points'),
                             );
                             ScaffoldMessenger.of(context)
                                 .showSnackBar(snackBar);
                           },
                           child: Row(
                             children: [
-                              const Icon(Icons.star,
-                                  color: LightColors.kDarkBlue, size: 30.0),
                               Text(
-                                "${totTasksDone * 100} Points",
+                                "${totTasksDone * 100}",
                                 style: const TextStyle(
                                     fontFamily: "Poppins",
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16),
-                              )
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Image.asset(
+                                'images/Logo.png',
+                                height: 30,
+                                width: 30,
+                              ),
+
                             ],
                           ),
                         ),
@@ -175,31 +188,32 @@ class _HomePageState extends State<HomePage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                username,
-                                textAlign: TextAlign.start,
-                                style: const TextStyle(
-                                    fontSize: 28.0,
-                                    color: LightColors.kDarkBlue,
-                                    fontWeight: FontWeight.w800,
-                                    fontFamily: "Poppins",
-                                    letterSpacing: 1.5),
-                              ),
-                              Text(
-                                email,
-                                textAlign: TextAlign.start,
-                                style: const TextStyle(
-                                    fontSize: 18.0,
-                                    color: Colors.black45,
-                                    fontWeight: FontWeight.w400,
-                                    fontFamily: "Poppins",
-                                    letterSpacing: 1),
-                              ),
-                            ],
-                          )
+                          // Column(
+                          //   crossAxisAlignment: CrossAxisAlignment.center,
+                          //   children: <Widget>[
+                          //     Text(
+                          //       username,
+                          //       textAlign: TextAlign.start,
+                          //       style: const TextStyle(
+                          //           fontSize: 28.0,
+                          //           color: LightColors.kDarkBlue,
+                          //           fontWeight: FontWeight.w800,
+                          //           fontFamily: "Poppins",
+                          //           letterSpacing: 1.5),
+                          //     ),
+                          //     Text(
+                          //       email,
+                          //       textAlign: TextAlign.start,
+                          //       style: const TextStyle(
+                          //           fontSize: 18.0,
+                          //           color: Colors.black45,
+                          //           fontWeight: FontWeight.w400,
+                          //           fontFamily: "Poppins",
+                          //           letterSpacing: 1),
+                          //     ),
+                          //   ],
+                          // )
+                          Image.asset("images/bunnit_logo_black.png",width: 100,height: 100,)
                         ],
                       ),
                     )
@@ -243,18 +257,18 @@ class _HomePageState extends State<HomePage> {
                         selectedDayPredicate: (day) =>
                             isSameDay(day, _selectedDays),
                         calendarFormat: CalendarFormat.week,
-                        // onDaySelected:
-                        //     (DateTime selectedDay, DateTime focusedDay) {
-                        //   setState(() {
-                        //     _selectedDays = selectedDay;
-                        //     print(_selectedDays);
-                        //     _focusedDay = selectedDay;
-                        //     focusDayGet =
-                        //         _focusedDay.toString().substring(0, 10);
-                        //     print(_focusedDay);
-                        //     print(focusDayGet);
-                        //   });
-                        // },
+                        onDaySelected:
+                            (DateTime selectedDay, DateTime focusedDay) {
+                          setState(() {
+                            _selectedDays = selectedDay;
+                            print(_selectedDays);
+                            _focusedDay = selectedDay;
+                            focusDayGet =
+                                _focusedDay.toString().substring(0, 10);
+                            print(_focusedDay);
+                            print(focusDayGet);
+                          });
+                        },
                         // initialCalendarFormat: CalendarFormat.week,
                         firstDay: DateTime.utc(2010, 10, 16),
                         lastDay: DateTime.utc(2030, 3, 14),
@@ -269,7 +283,7 @@ class _HomePageState extends State<HomePage> {
                             .collection('users')
                             .doc(FirebaseAuth.instance.currentUser!.uid)
                             .collection('Tasks')
-                            // .where('getDate', isEqualTo: focusDayGet)
+                            .where('getDate', isEqualTo: focusDayGet)
                             .snapshots(),
                         builder:
                             (context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -322,103 +336,94 @@ class _HomePageState extends State<HomePage> {
                                                           data.get('Title')),
                                                     )),
                                                     GestureDetector(
-                                                      onTap: () {
-                                                        showDialog(
-                                                            context: context,
-                                                            builder: (context) {
-                                                              return AlertDialog(
-                                                                content: Column(
-                                                                  mainAxisSize:
-                                                                      MainAxisSize
-                                                                          .min,
-                                                                  children: [
-                                                                    GestureDetector(
-                                                                        onTap:
-                                                                            () {},
-                                                                        child:
-                                                                            Column(
-                                                                          children: [
-                                                                            const Padding(
-                                                                              padding: EdgeInsets.all(8.0),
-                                                                              child: Text("Mark as Completed"),
-                                                                            ),
-                                                                            Row(
-                                                                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                                                              children: [
-                                                                                Container(
-                                                                                  // decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: LightColors.kDarkYellow),
-                                                                                  child: GestureDetector(
-                                                                                    onTap: () {
-                                                                                      Navigator.pop(context);
-                                                                                    },
-                                                                                    child: Padding(
-                                                                                      padding: EdgeInsets.all(8),
-                                                                                      child: Text(
-                                                                                        'No',
-                                                                                        style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w500, color: ActiveColor),
-                                                                                      ),
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                                Container(
-                                                                                  padding: EdgeInsets.all(5),
-                                                                                  width: MediaQuery.of(context).size.width * 0.25,
-                                                                                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: LightColors.kDarkYellow),
-                                                                                  child: GestureDetector(
-                                                                                      onTap: () {
-                                                                                        FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).collection('Tasks').doc(data.id).set({
-                                                                                          'status': "Completed",
-                                                                                        }, SetOptions(merge: true));
-                                                                                        setState(() {});
-
-                                                                                        Navigator.pop(context);
-                                                                                        print('Task Completed');
-                                                                                      },
-                                                                                      child: Text(
-                                                                                        'Yes',
-                                                                                        style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w500),
-                                                                                        textAlign: TextAlign.center,
-                                                                                      )),
-                                                                                ),
-                                                                              ],
-                                                                            )
-                                                                          ],
-                                                                        ))
-                                                                  ],
-                                                                ),
-                                                              );
-                                                            });
-                                                        // markRead(data.id, context);
-                                                      },
-                                                      child: Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: data.get(
-                                                                      'status') ==
+                                                      onTap:
+                                                          data.get('status') ==
                                                                   'Completed'
-                                                              ? Colors
-                                                                  .greenAccent
-                                                              : LightColors
-                                                                  .kDarkYellow,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(15),
-                                                        ),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8.0),
-                                                          child: Text(
-                                                            data.get('status'),
-                                                            style:
-                                                                const TextStyle(
-                                                                    fontFamily:
-                                                                        "Poppins",
-                                                                    fontSize:
-                                                                        12),
-                                                          ),
-                                                        ),
-                                                      ),
+                                                              ? () {}
+                                                              : () {
+                                                                  showDialog(
+                                                                      context:
+                                                                          context,
+                                                                      builder:
+                                                                          (context) {
+                                                                        return DialogBox(
+                                                                            context,
+                                                                            data);
+                                                                      });
+                                                                  // markRead(data.id, context);
+                                                                },
+                                                      child:
+                                                          data.get('status') ==
+                                                                  'Completed'
+                                                              ? Container(
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color: data.get('status') ==
+                                                                            'Completed'
+                                                                        ? ActiveColor
+                                                                        : Colors
+                                                                            .deepOrangeAccent
+                                                                            .withOpacity(0.4),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            10),
+                                                                  ),
+                                                                  child:
+                                                                      Padding(
+                                                                    padding:
+                                                                        const EdgeInsets.all(
+                                                                            8.0),
+                                                                    child: data.get('status') ==
+                                                                            'Completed'
+                                                                        ? FaIcon(
+                                                                            FontAwesomeIcons.check,
+                                                                            color:
+                                                                                Colors.white,
+                                                                            size:
+                                                                                22,
+                                                                          )
+                                                                        : FaIcon(
+                                                                            FontAwesomeIcons.check,
+                                                                            color:
+                                                                                ActiveColor,
+                                                                            size:
+                                                                                22,
+                                                                          ),
+                                                                  ),
+                                                                )
+                                                              : Container(
+                                                                  decoration: BoxDecoration(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              10),
+                                                                      border: Border.all(
+                                                                          color:
+                                                                              ActiveColor)),
+                                                                  child:
+                                                                      Padding(
+                                                                    padding:
+                                                                        const EdgeInsets.all(
+                                                                            8.0),
+                                                                    child: data.get('status') ==
+                                                                            'Completed'
+                                                                        ? FaIcon(
+                                                                            FontAwesomeIcons.check,
+                                                                            color:
+                                                                                Colors.white,
+                                                                            size:
+                                                                                22,
+                                                                          )
+                                                                        : FaIcon(
+                                                                            FontAwesomeIcons.check,
+                                                                            color:
+                                                                                ActiveColor,
+                                                                            size:
+                                                                                22,
+                                                                          ),
+                                                                  ),
+                                                                ),
                                                     )
                                                   ],
                                                 ),
@@ -440,42 +445,75 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // void markRead(String id, BuildContext context) {
-  //   var alertStyle = const AlertStyle(
-  //     animationType: AnimationType.grow,
-  //     overlayColor: Colors.black87,
-  //     isCloseButton: true,
-  //     isOverlayTapDismiss: true,
-  //     titleStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-  //     descStyle: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-  //     animationDuration: Duration(milliseconds: 400),
-  //   );
-  //
-  //   Alert(context: context, style: alertStyle, buttons: [
-  //     DialogButton(
-  //       child: const Center(
-  //         child: Text(
-  //           "Mark Completed",
-  //           textAlign: TextAlign.center,
-  //           style: TextStyle(color: Colors.white, fontSize: 15),
-  //         ),
-  //       ),
-  //       onPressed: () {
-  //         FirebaseFirestore.instance
-  //             .collection('users')
-  //             .doc(FirebaseAuth.instance.currentUser!.uid)
-  //             .collection('Tasks')
-  //             .doc(id)
-  //             .set({
-  //           'status': "Completed",
-  //         }, SetOptions(merge: true));
-  //         setState(() {});
-  //
-  //         Navigator.pop(context);
-  //         print('Your review is not submited');
-  //       },
-  //       color: LightColors.kDarkYellow,
-  //     )
-  //   ]).show();
-  // }
+  AlertDialog DialogBox(BuildContext context, DocumentSnapshot<Object?> data) {
+    return AlertDialog(
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text("Mark as Completed"),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Container(
+                    // decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: LightColors.kDarkYellow),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.all(8),
+                        child: Text(
+                          'No',
+                          style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500,
+                              color: ActiveColor),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(5),
+                    width: MediaQuery.of(context).size.width * 0.25,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: LightColors.kDarkYellow),
+                    child: GestureDetector(
+                        onTap: () {
+                          FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(FirebaseAuth.instance.currentUser!.uid)
+                              .collection('Tasks')
+                              .doc(data.id)
+                              .set({
+                            'status': "Completed",
+                          }, SetOptions(merge: true));
+
+                          totTaskDone();
+                          setState(() {});
+
+                          Navigator.pop(context);
+                          print('Task Completed');
+                        },
+                        child: Text(
+                          'Yes',
+                          style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500),
+                          textAlign: TextAlign.center,
+                        )),
+                  ),
+                ],
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
 }

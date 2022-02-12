@@ -104,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
             showLoaderDialog(context);
 
             signIn(emailController.text.trim(), passwordController.text.trim());
-            Navigator.pop(context);
+
           },
           child: const Text(
             "Login",
@@ -128,35 +128,47 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    SizedBox(
-                      height: 100,
-                      width: 100,
-                      child: Image.asset(
-                        "images/Logo.png",
-                        fit: BoxFit.contain,
-                      ),
+                    Container(
+                      height: 150,
+                      width: 150,
+                      decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.deepOrangeAccent.withOpacity(0.3),
+                              spreadRadius: 3,
+                              blurRadius: 5,
+                              offset:
+                                  Offset(0, 3), // changes position of shadow
+                            ),
+                          ],
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: Colors.deepOrange),
+                          image: DecorationImage(
+                              image: AssetImage(
+                            'images/bunnit_orange_logo.jpg',
+                          ))),
                     ),
                     const SizedBox(height: 45),
                     emailField,
                     const SizedBox(height: 25),
                     passwordField,
-                    //SizedBox(height: 35),
-                    Container(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      alignment: Alignment.centerRight,
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ForgotPassword()));
-                        },
-                        child: const Text('Forgot Password ?',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFFff8e26))),
-                      ),
-                    ),
+                    SizedBox(height: 35),
+                    // Container(
+                    //   padding: const EdgeInsets.symmetric(vertical: 10),
+                    //   alignment: Alignment.centerRight,
+                    //   child: GestureDetector(
+                    //     onTap: () {
+                    //       Navigator.push(
+                    //           context,
+                    //           MaterialPageRoute(
+                    //               builder: (context) => ForgotPassword()));
+                    //     },
+                    //     child: const Text('Forgot Password ?',
+                    //         style: TextStyle(
+                    //             fontWeight: FontWeight.w500,
+                    //             color: Color(0xFFff8e26))),
+                    //   ),
+                    // ),
                     loginButton,
                     const SizedBox(height: 15),
                     Row(
@@ -197,6 +209,7 @@ class _LoginScreenState extends State<LoginScreen> {
         await _auth
             .signInWithEmailAndPassword(email: email, password: password)
             .then((uid) => {
+        Navigator.pop(context),
                   Fluttertoast.showToast(msg: "Login Successful"),
                   Navigator.of(context).pushReplacement(
                       MaterialPageRoute(builder: (context) => HomePage())),
